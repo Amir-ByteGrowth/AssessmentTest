@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">AssessmentTest</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title">Title</string>
+    <string name="body">Body</string>
+
+    <string name="post_detail">Post Detail</string>
+    <string name="loading">Loading data..</string>
+    <string name="network_error">Network not available</string>
+
+    <string name="fav_post_error">No Favorite posts yet </string>
+</resources>
