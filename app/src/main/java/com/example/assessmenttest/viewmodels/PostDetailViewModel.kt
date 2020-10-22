@@ -1,9 +1,12 @@
 package com.example.assessmenttest.viewmodels
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.*
 import com.example.assessmenttest.adaptors.CommentsAdaptor
 import com.example.assessmenttest.models.Comments
 import com.example.assessmenttest.models.FavPosts
@@ -12,6 +15,7 @@ import com.example.assessmenttest.repository.PostRepository
 import com.example.assessmenttest.utils.AppResult
 import com.example.assessmenttest.utils.LoadingState
 import com.example.assessmenttest.utils.SingleLiveEvent
+import com.example.assessmenttest.workmanager.FavPostWorkManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -126,5 +130,8 @@ class PostDetailViewModel(
             }
         }
     }
+
+
+
 
 }

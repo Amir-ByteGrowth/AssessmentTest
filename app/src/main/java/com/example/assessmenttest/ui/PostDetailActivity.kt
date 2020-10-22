@@ -2,7 +2,6 @@ package com.example.assessmenttest.ui
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,8 +13,6 @@ import com.example.assessmenttest.utils.LoadingState
 import com.example.assessmenttest.viewmodels.PostDetailViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_post_detail.*
-import kotlinx.android.synthetic.main.fragment_favrouite.*
-import kotlinx.android.synthetic.main.posts_fragment.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 //import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -124,12 +121,11 @@ class PostDetailActivity : AppCompatActivity() {
 
                     if (postDetailViewModel.netWorkError.value!!) {
                         val snack = Snackbar.make(
-                            recComments, resources.getString(R.string.network_error),
+                            recComments, resources.getString(R.string.loading),
                             Snackbar.LENGTH_LONG
                         )
                         snack.show()
-                    }
-                    else {
+                    } else {
 
                         val snack = Snackbar.make(
                             recComments, resources.getString(R.string.network_error),
@@ -146,5 +142,7 @@ class PostDetailActivity : AppCompatActivity() {
                 }
             }
         })
+
+
     }
 }

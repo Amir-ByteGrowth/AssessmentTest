@@ -10,9 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.*
 import com.example.assessmenttest.R
 import com.example.assessmenttest.utils.LoadingState
 import com.example.assessmenttest.viewmodels.PostsViewModel
+import com.example.assessmenttest.workmanager.FavPostWorkManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.posts_fragment.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -67,12 +69,11 @@ class PostsFragment : Fragment() {
 
                     if (userViewModel.netWorkError.value!!) {
                         val snack = Snackbar.make(
-                            recPosts, resources.getString(R.string.network_error),
+                            recPosts, resources.getString(R.string.loading),
                             Snackbar.LENGTH_LONG
                         )
                         snack.show()
-                    }
-                    else {
+                    } else {
 
                         val snack = Snackbar.make(
                             recPosts, resources.getString(R.string.network_error),
@@ -101,7 +102,7 @@ class PostsFragment : Fragment() {
 //            snack.show()
 //        }
 
-
+        startWorker()
         return view
     }
 
@@ -116,5 +117,23 @@ class PostsFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
+    fun startWorker() {
+        val data = Data.Builder()
+            .putString("blank", "")
+            .build()
 
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+
+        val oneTimeRequest = OneTimeWorkRequest.Builder(FavPostWorkManager::class.java)
+            .setInputData(data)
+            .setConstraints(constraints.build())
+            .addTag("Posts")
+            .build()
+
+
+
+        WorkManager.getInstance(activity!!)
+            .enqueueUniqueWork("MakeFavPosts", ExistingWorkPolicy.KEEP, oneTimeRequest)
+    }
 }
