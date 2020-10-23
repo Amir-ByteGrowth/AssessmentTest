@@ -21,6 +21,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 class FavPostWorkManager(
     private val mContext: Context,
@@ -40,6 +41,8 @@ class FavPostWorkManager(
                 var response = provideUseApi().getComments("1")
                 if (response.isSuccessful) {
                     displayNotification("comments downloaded")
+                    Thread.sleep(5000L)
+                    notificationManager.cancel(notificationId)
                 }
                 Log.d("WorkManager", "Worked")
             }
