@@ -20,6 +20,17 @@
         android:textSize="16sp"
         android:textStyle="bold"
         tools:text="@string/app_name" />
+    <TextView
+        android:layout_below="@+id/tv_notif_title"
+        android:id="@+id/tv_notif_work"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_toEndOf="@+id/iv_notif"
+        android:layout_toRightOf="@+id/iv_notif"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="@string/app_name" />
 
 
 

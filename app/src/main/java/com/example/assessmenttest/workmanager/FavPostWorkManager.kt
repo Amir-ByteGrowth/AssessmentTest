@@ -8,12 +8,19 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.assessmenttest.BuildConfig
 import com.example.assessmenttest.R
 import com.example.assessmenttest.apis.PostsApis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class FavPostWorkManager(
     private val mContext: Context,
@@ -26,11 +33,15 @@ class FavPostWorkManager(
 
     override fun doWork(): Result {
         Log.d("AndroidVille", Thread.currentThread().toString())
-        displayNotification()
+        displayNotification("getting comments")
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
 //                postsApis.getComments(1.toString())
-                Log.d("WorkManager","Worked")
+                var response = provideUseApi().getComments("1")
+                if (response.isSuccessful) {
+                    displayNotification("comments downloaded")
+                }
+                Log.d("WorkManager", "Worked")
             }
         }
 
@@ -41,7 +52,7 @@ class FavPostWorkManager(
     private val notificationId: Int = 500
     private val notificationChannel: String = "AssessmentTest"
 
-    private fun displayNotification() {
+    private fun displayNotification(workType: String) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 notificationChannel,
@@ -57,6 +68,7 @@ class FavPostWorkManager(
 
         val remoteView = RemoteViews(applicationContext.packageName, R.layout.custom_notif)
         remoteView.setImageViewResource(R.id.iv_notif, R.mipmap.ic_launcher)
+        remoteView.setTextViewText(R.id.tv_notif_work, workType)
 
 
         notificationBuilder
@@ -69,5 +81,39 @@ class FavPostWorkManager(
     override fun onStopped() {
         super.onStopped()
         notificationManager.cancel(notificationId)
+    }
+
+
+    val connectTimeout: Long = 40// 20s
+    val readTimeout: Long = 40 // 20s
+
+    fun provideUseApi(): PostsApis {
+        var retrofit = provideRetrofit()
+        return retrofit.create(PostsApis::class.java)
+    }
+
+    fun provideHttpClient(): OkHttpClient {
+//        val okHttpClientBuilder = OkHttpClient.Builder()
+        val okHttpClientBuilder = OkHttpClient.Builder()
+            .connectTimeout(connectTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+        if (BuildConfig.DEBUG) {
+            val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+            okHttpClientBuilder.addInterceptor(httpLoggingInterceptor)
+        }
+        okHttpClientBuilder.build()
+        return okHttpClientBuilder.build()
+    }
+
+    fun provideRetrofit(): Retrofit {
+        var client = provideHttpClient()
+        return Retrofit.Builder()
+            .baseUrl("https://jsonplaceholder.typicode.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .client(client)
+            .build()
     }
 }
