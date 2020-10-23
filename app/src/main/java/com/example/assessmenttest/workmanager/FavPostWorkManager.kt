@@ -38,6 +38,7 @@ class FavPostWorkManager(
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
 //                postsApis.getComments(1.toString())
+                //just replace api
                 var response = provideUseApi().getComments("1")
                 if (response.isSuccessful) {
                     displayNotification("comments downloaded")
