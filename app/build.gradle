@@ -123,5 +123,8 @@ dependencies {
     // workmanager
     implementation "androidx.work:work-runtime-ktx:2.4.0"
 
+    // swipe to refresh
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+
 
 }

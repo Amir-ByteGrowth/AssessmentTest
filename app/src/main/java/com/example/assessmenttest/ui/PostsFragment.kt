@@ -5,16 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.*
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.assessmenttest.R
 import com.example.assessmenttest.utils.LoadingState
 import com.example.assessmenttest.viewmodels.PostsViewModel
-import com.example.assessmenttest.workmanager.FavPostWorkManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.posts_fragment.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -31,7 +29,7 @@ class PostsFragment : Fragment() {
     //    private lateinit var viewModel: PostsViewModel
     private val userViewModel by viewModel<PostsViewModel>()
 
-    lateinit var relPostParent: RelativeLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +37,7 @@ class PostsFragment : Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.posts_fragment, container, false)
-        relPostParent = view.findViewById(R.id.relPostParent)
+        swipeRefreshLayout = view.findViewById(R.id.relPostParent)
         userViewModel.data.observe(activity!!, Observer {
             // Populate the UI
             if (it != null) {
@@ -84,6 +82,7 @@ class PostsFragment : Fragment() {
                     progressBar.visibility = View.VISIBLE
                 } else if (it == LoadingState.LOADED) {
                     progressBar.visibility = View.GONE
+                    swipeRefreshLayout.isRefreshing=false
                 } else if (it == LoadingState.error("Data")) {
                     progressBar.visibility = View.GONE
 
@@ -102,7 +101,17 @@ class PostsFragment : Fragment() {
 //            snack.show()
 //        }
 
+        swipeRefreshLayout.setOnRefreshListener {
+            userViewModel.fetchData()
+        }
 
+        // Configure the refreshing colors
+        swipeRefreshLayout.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
+        );
         return view
     }
 

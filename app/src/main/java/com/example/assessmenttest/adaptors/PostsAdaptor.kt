@@ -13,9 +13,16 @@ class PostsAdaptor() : RecyclerView.Adapter<PostsAdaptor.ViewHolder>() {
 
 
     private lateinit var postList: List<Posts>
+    init {
+        postList= listOf()
+    }
 
     lateinit var onItemClick: ViewHolder.onItemClick
     fun updatePostItems(postList: List<Posts>, onItemClick: ViewHolder.onItemClick) {
+        if (this.postList !=null){
+            this.postList= listOf()
+            notifyDataSetChanged()
+        }
         this.postList = postList
         this.onItemClick = onItemClick
         notifyDataSetChanged()
