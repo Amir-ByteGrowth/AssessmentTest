@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.*
 import com.example.assessmenttest.R
 import com.example.assessmenttest.models.FavPosts
 import com.example.assessmenttest.models.Posts
 import com.example.assessmenttest.utils.LoadingState
+import com.example.assessmenttest.utils.Utility
 import com.example.assessmenttest.viewmodels.PostDetailViewModel
+import com.example.assessmenttest.workmanager.FavPostWorkManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_post_detail.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -43,7 +46,9 @@ class PostDetailActivity : AppCompatActivity() {
 
 
         imgFav.setOnClickListener(View.OnClickListener {
-
+            if (!Utility.isOnline(applicationContext)) {
+                startWorker()
+            }
             if (postEntity.fav == 0) {
 
                 postDetailViewModel.makePostFav(
@@ -145,4 +150,25 @@ class PostDetailActivity : AppCompatActivity() {
 
 
     }
+
+    fun startWorker() {
+        val data = Data.Builder()
+            .putString("blank", "")
+            .build()
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+
+        val oneTimeRequest = OneTimeWorkRequest.Builder(FavPostWorkManager::class.java)
+            .setInputData(data)
+            .setConstraints(constraints.build())
+            .addTag("Posts")
+            .build()
+
+
+
+        WorkManager.getInstance(applicationContext!!)
+            .enqueueUniqueWork("MakeFavPosts", ExistingWorkPolicy.KEEP, oneTimeRequest)
+    }
+
 }

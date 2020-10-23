@@ -102,7 +102,7 @@ class PostsFragment : Fragment() {
 //            snack.show()
 //        }
 
-        startWorker()
+
         return view
     }
 
@@ -117,23 +117,5 @@ class PostsFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
-    fun startWorker() {
-        val data = Data.Builder()
-            .putString("blank", "")
-            .build()
 
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-
-        val oneTimeRequest = OneTimeWorkRequest.Builder(FavPostWorkManager::class.java)
-            .setInputData(data)
-            .setConstraints(constraints.build())
-            .addTag("Posts")
-            .build()
-
-
-
-        WorkManager.getInstance(activity!!)
-            .enqueueUniqueWork("MakeFavPosts", ExistingWorkPolicy.KEEP, oneTimeRequest)
-    }
 }
