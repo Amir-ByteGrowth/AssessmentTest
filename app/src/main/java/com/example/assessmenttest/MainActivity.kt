@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : FragmentActivity() {
 
-    var tabPosition:Int=0
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,10 +20,10 @@ class MainActivity : FragmentActivity() {
             TabLayoutMediator.TabConfigurationStrategy { tab, position ->
                 if (position ==0){
                     tab.text = "Posts "
-                    tabPosition=0
+
                 }else{
                     tab.text = "Fav Posts "
-                    tabPosition=1
+
                 }
 
             }).attach()
